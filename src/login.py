@@ -85,8 +85,8 @@ if __name__ == '__main__':
         pss = getpass.getpass("Username: %s\nFill in your password manually:"%(user)) 
     otp_code = pyotp.TOTP(config[args.user]['otp_key'])
     pssOtp = pss + otp_code.now().strip()
-    print("pssOtp:", pssOtp)
-    #  os.system("sshpass -p \"%s\" ssh darren1629@ln01.twcc.ai"%(pssOtp))
+    #  print("pssOtp:", pssOtp)
+    os.system("sshpass -p \"%s\" ssh %s@ln01.twcc.ai"%(pssOtp, args.user))
 
     #  print('password =', pss)
 
