@@ -93,7 +93,6 @@ if __name__ == '__main__':
     #  print('password =', pss)
 
     
-#  otp_key = "Q47THR6X4A6RQE5SWBL3YXD4N27G7NOP65SNGP36DBKZ7R5HMBMA===="
 #  otp_code = pyotp.TOTP(otp_key)
 
 #  user = getpass.getuser() 
@@ -101,4 +100,3 @@ if __name__ == '__main__':
 
 #  pssOtp = pss + otp_code.now().strip()
 
-#  os.system("sshpass -p \"%s\" ssh darren1629@ln01.twcc.ai"%(pssOtp))

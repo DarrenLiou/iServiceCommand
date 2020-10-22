@@ -1,4 +1,4 @@
 config/*
-!otp.json
+!example.json
 logs/*.log
 *.swp
