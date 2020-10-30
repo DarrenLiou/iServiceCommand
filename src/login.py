@@ -9,9 +9,9 @@ from crypto import encrypt_password, decrypt_password
 
 def _parse_args():
     parser = argparse.ArgumentParser(description='Auto connect to iService1. You can use "ssh" or "scp" features.')
-    parser.add_argument('-s','--src', type=Path, default=None,
+    parser.add_argument('-l','--local', type=Path, default=None,
             help='path of source file(used for scp), can be either absolute or relative path')
-    parser.add_argument('-t','--tgt', type=Path, default=None,
+    parser.add_argument('-s','--server', type=str, default=None,
             help='path of target file(used for scp), can be either absolute or relative path')
     parser.add_argument('-p', '--pss', action='store_true',
             help='Set this flag to fill in the password by your own, otherwise use the stored encrypted password')
@@ -19,12 +19,14 @@ def _parse_args():
             help='Set this flag to generate new key and store the encrypted password')
     #  parser.add_argument('--safe', action='store_true',
             #  help='Set this flag to use the setuid() feature with safety, which is experimental')
-    parser.add_argument('-u', "--user", type=str, default=None,
+    parser.add_argument("--user", type=str, default=None,
             help="Type the username on iService1")
-    parser.add_argument('-u', '--upload', action='store_true',
+    parser.add_argument('-u','--upload', action='store_true',
             help='upload file to server')
     parser.add_argument('-d', '--download', action='store_true',
             help='download file from server')
+    parser.add_argument('-r', '--recursive', action='store_true',
+            help='recursive')
     args = parser.parse_args()
     return args
 def check_config(args, script_dir, logger=None):
@@ -78,6 +80,12 @@ def update_password(args, config, user_config_path, logger=None):
     config[args.user]['token'] = token
     with open(user_config_path, 'w') as f:
         config.write(f)
+def get_file_abs_path(path):
+    cwd = Path(os.getcwd())
+    if str(path)[0] != '/':
+        path = cwd / path
+    return path
+
 
 if __name__ == '__main__':
     args = _parse_args()
@@ -87,19 +95,35 @@ if __name__ == '__main__':
     config = check_config(args, script_dir)
     pss = decrypt_password(config[args.user]['key'], config[args.user]['token'])
     if args.pss and not args.update:
-        user = getpass.getuser() 
+        user = getpass.getuser()
         pss = getpass.getpass("Username: %s\nFill in your password manually:"%(args.user)) 
     otp_code = pyotp.TOTP(config[args.user]['otp_key'])
     pssOtp = pss + otp_code.now().strip()
     #  print("pssOtp:", pssOtp)
     if not args.upload and not args.download:
         os.system("sshpass -p \"%s\" ssh %s@ln01.twcc.ai"%(pssOtp, args.user))
+    if (args.local is None or args.server is None) and (args.upload or args.download):
+        print("src or target is None!")
+        exit(1)
+    cwd = Path(os.getcwd())
+    if args.local is not None:
+        local = get_file_abs_path(args.local)
+    args.server = args.server.strip()
+    print("server path:%s local path:%s"%(args.server, local))
+    #  if args.tgt is not None:
+        #  tgt = get_file_abs_path(args.tgt)
     if args.upload and args.download:
         print("Can't upload and download at the same time!")
     if args.download:
-        pass
+        if args.recursive:
+            os.system("sshpass -p \"%s\" scp -r %s@ln01.twcc.ai:%s %s"%(pssOtp, args.user, args.server, local))
+        else:
+            os.system("sshpass -p \"%s\" scp  %s@ln01.twcc.ai:%s %s"%(pssOtp, args.user, args.server, local))
     elif args.upload:
-        pass
+        if args.recursive:
+            os.system("sshpass -p \"%s\" scp -r %s %s@ln01.twcc.ai:%s "%(pssOtp, local, args.user, args.server))
+        else:
+            os.system("sshpass -p \"%s\" scp %s %s@ln01.twcc.ai:%s"%(pssOtp, local, args.user, args.server))
 
     #  print('password =', pss)
 
