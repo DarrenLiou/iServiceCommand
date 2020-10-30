@@ -11,7 +11,7 @@ def _parse_args():
     parser = argparse.ArgumentParser(description='Auto connect to iService1. You can use "ssh" or "scp" features.')
     parser.add_argument('-l','--local', type=Path, default=None,
             help='path of source file(used for scp), can be either absolute or relative path')
-    parser.add_argument('-s','--server', type=str, default=None,
+    parser.add_argument('-s','--server', type=Path, default=None,
             help='path of target file(used for scp), can be either absolute or relative path')
     parser.add_argument('-p', '--pss', action='store_true',
             help='Set this flag to fill in the password by your own, otherwise use the stored encrypted password')
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     cwd = Path(os.getcwd())
     if args.local is not None:
         local = get_file_abs_path(args.local)
-    args.server = args.server.strip()
+    #  args.server = args.server.strip()
     print("server path:%s local path:%s"%(args.server, local))
     #  if args.tgt is not None:
         #  tgt = get_file_abs_path(args.tgt)
