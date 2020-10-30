@@ -108,8 +108,8 @@ if __name__ == '__main__':
     cwd = Path(os.getcwd())
     if args.local is not None:
         local = get_file_abs_path(args.local)
+        print("server path:%s local path:%s"%(args.server, local))
     #  args.server = args.server.strip()
-    print("server path:%s local path:%s"%(args.server, local))
     #  if args.tgt is not None:
         #  tgt = get_file_abs_path(args.tgt)
     if args.upload and args.download:
