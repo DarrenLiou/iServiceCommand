@@ -21,6 +21,10 @@ def _parse_args():
             #  help='Set this flag to use the setuid() feature with safety, which is experimental')
     parser.add_argument('-u', "--user", type=str, default=None,
             help="Type the username on iService1")
+    parser.add_argument('-u', '--upload', action='store_true',
+            help='upload file to server')
+    parser.add_argument('-d', '--download', action='store_true',
+            help='download file from server')
     args = parser.parse_args()
     return args
 def check_config(args, script_dir, logger=None):
@@ -88,11 +92,17 @@ if __name__ == '__main__':
     otp_code = pyotp.TOTP(config[args.user]['otp_key'])
     pssOtp = pss + otp_code.now().strip()
     #  print("pssOtp:", pssOtp)
-    os.system("sshpass -p \"%s\" ssh %s@ln01.twcc.ai"%(pssOtp, args.user))
+    if not args.upload and not args.download:
+        os.system("sshpass -p \"%s\" ssh %s@ln01.twcc.ai"%(pssOtp, args.user))
+    if args.upload and args.download:
+        print("Can't upload and download at the same time!")
+    if args.download:
+        pass
+    elif args.upload:
+        pass
 
     #  print('password =', pss)
 
-    
 #  otp_code = pyotp.TOTP(otp_key)
 
 #  user = getpass.getuser() 

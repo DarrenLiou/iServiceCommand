@@ -2,3 +2,4 @@ config/*
 !example.json
 logs/*.log
 *.swp
+__pycache__/*
