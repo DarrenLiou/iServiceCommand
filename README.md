@@ -10,6 +10,7 @@ Thus, we try to write a script to auto login iService with 'ssh' and 'scp' featu
 
 ```
 pip install cryptography
+pip install pyotp
 sudo apt-get install sshpass
 ```
 Note: If a new user first login to  iService with this script, you need to copy the otp key to ```config/otp.json``` with the format of following:
