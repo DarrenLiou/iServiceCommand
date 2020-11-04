@@ -98,10 +98,12 @@ if __name__ == '__main__':
         user = getpass.getuser()
         pss = getpass.getpass("Username: %s\nFill in your password manually:"%(args.user)) 
     otp_code = pyotp.TOTP(config[args.user]['otp_key'])
-    pssOtp = pss + otp_code.now().strip()
+    #  pssOtp = pss + otp_code.now().strip()
+    pssOtp = pss 
     #  print("pssOtp:", pssOtp)
     if not args.upload and not args.download:
         os.system("sshpass -p \"%s\" ssh %s@ln01.twcc.ai"%(pssOtp, args.user))
+        #  os.system("sshpass -p \"%s\" ssh %s@ln01.twcc.ai"%(pss, args.user))
     if (args.local is None or args.server is None) and (args.upload or args.download):
         print("src or target is None!")
         exit(1)
