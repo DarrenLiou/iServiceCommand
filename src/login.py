@@ -66,7 +66,6 @@ def check_config(args, script_dir, logger=None):
     #  else:
         #  if args.generate or args.user not in config.sections():
             #  update_password(args, config, user_config_path, logger)
-
     #  else:
         #  print('Exist!')
     return config
@@ -98,10 +97,12 @@ if __name__ == '__main__':
         user = getpass.getuser()
         pss = getpass.getpass("Username: %s\nFill in your password manually:"%(args.user)) 
     otp_code = pyotp.TOTP(config[args.user]['otp_key'])
-    pssOtp = pss + otp_code.now().strip()
+    #  pssOtp = pss + otp_code.now().strip()
+    pssOtp = pss 
     #  print("pssOtp:", pssOtp)
     if not args.upload and not args.download:
         os.system("sshpass -p \"%s\" ssh %s@ln01.twcc.ai"%(pssOtp, args.user))
+        #  os.system("sshpass -p \"%s\" ssh %s@ln01.twcc.ai"%(pss, args.user))
     if (args.local is None or args.server is None) and (args.upload or args.download):
         print("src or target is None!")
         exit(1)
